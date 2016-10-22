@@ -45,6 +45,8 @@
   <ItemGroup>
     <Compile Include="ConcatStream.cs" />
     <Compile Include="DemoService.cs" />
+    <Compile Include="FilesWebService.cs" />
+    <Compile Include="FileSystemDefs.cs" />
     <Compile Include="NoSeekMemoryStream.cs" />
     <Compile Include="ThreadPoolRouter.cs" />
     <Compile Include="WebRequest.cs" />
