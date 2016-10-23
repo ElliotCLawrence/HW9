@@ -231,7 +231,7 @@ namespace CS422
         private string m_path;
 
         public StdFSFile(string path) { m_path = path; }
-
+        
         public override string Name
         {
             get

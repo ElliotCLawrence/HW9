@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace CS422
 {
@@ -14,6 +15,14 @@ namespace CS422
         {
             r_sys = fs;
 
+        }
+
+        public override string ServiceURI
+        {
+            get
+            {
+                return "/files";
+            }
         }
 
         public override void Handler(WebRequest req)
@@ -40,7 +49,7 @@ namespace CS422
             File422 file = dir.GetFile(pieces[pieces.Length - 1]);
             if (file != null)
             {
-                //RespondWithFile(file);
+                RespondWithFile(file, req);
             }
             else
             {
@@ -56,9 +65,15 @@ namespace CS422
             }
         }
 
+        String BuildDirHTML(Dir422 directory)
+        {
+
+            return "HI";
+        }
+
         private void RespondWithList(Dir422 dir, WebRequest req)
         {
-            var html = new System.Text.StringBuilder("<html>");
+            var html = new StringBuilder("<html>");
 
             foreach (File422 file in dir.GetFiles())
             {
@@ -81,16 +96,26 @@ namespace CS422
             req.WriteHTMLResponse(html.ToString());
         }
 
-
-
-
-        public override string ServiceURI
+        private void RespondWithFile(File422 file, WebRequest req)
         {
-            get
-            {
-                return "/files";
-            }
+            var html = new StringBuilder("<html>");
+            FileStream fs = File.Open(file.Name, FileMode.Open, FileAccess.ReadWrite);
+
         }
+
+        string GetHREFFromFile422(File422 file, string str) //get filepath from file
+        {
+            //if (file == null)
+            //    return str;
+            //str += '/' + file.Name;
+            //return GetHREFFromFile422(file.Parent, str);
+
+            return file.Name;
+            
+        }
+
+
+
     }
 }
 
