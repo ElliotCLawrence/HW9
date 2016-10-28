@@ -103,19 +103,7 @@ namespace CS422
 
         private void RespondWithFile(File422 file, WebRequest req) //return a file
         {
-            var html = new StringBuilder("<html>"); //start a string builder and start filling with HTML
-            byte[] buffer = new byte[1024]; //create a buffer for reading from a file
-
-
-            FileStream fs = (FileStream) file.OpenReadOnly(); //open this file
-            html.AppendLine(); //add a line after the open tag
-            
-            while (fs.Read(buffer,0,1024) > 0) //read in the file and add it to HTML
-            {
-                html.Append(Encoding.Default.GetString(buffer));
-            }
-            html.AppendLine("</html>");
-            req.WriteHTMLResponse(html.ToString()); //write a page as a file
+            req.WriteHTMLResponse(file.OpenReadOnly()); //write a page as a file
         }
 
         string GetHREFFromFile422(File422 file) //get filepath from file

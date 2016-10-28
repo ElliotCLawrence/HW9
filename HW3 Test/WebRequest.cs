@@ -57,6 +57,32 @@ namespace CS422
             string responseString = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + htmlString.Length + "\r\n\r\n" + htmlString;
             byte[] responseBytes = Encoding.ASCII.GetBytes(responseString);
             netStream.Write(responseBytes, 0, responseBytes.Length); //write the status line 
+            netStream.Dispose();
+            return true;
+        }
+
+        public bool WriteHTMLResponse(Stream htmlStream)
+        {
+            if (htmlStream == null)
+                return false;
+
+            string responseString = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + htmlStream.Length + "\r\n\r\n";
+
+            byte[] responseBytes = Encoding.ASCII.GetBytes(responseString);
+            netStream.Write(responseBytes, 0, responseBytes.Length); //write the beginning response to the client.
+
+
+            byte[] buffer = new byte[1024]; //create a buffer for reading from a file
+
+            while (htmlStream.Read(buffer, 0, 1024) > 0) //read in the file and add it to HTML
+            {
+                netStream.Write(buffer, 0, buffer.Length);
+            }
+
+
+
+            netStream.Dispose();
+
             return true;
         }
     }

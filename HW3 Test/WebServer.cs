@@ -105,8 +105,19 @@ namespace CS422
             int startingMinute = DateTime.Now.Minute;
             string fullRequest = "";
             string destination = "/";
+            
             byte[] streamBuff = new byte[1024]; //create a buffer for reading
-            int x = clientStream.Read(streamBuff, 0, 1024);
+            int x;
+            try
+            {
+              x  = clientStream.Read(streamBuff, 0, 1024);
+            }
+            catch //if read times out
+            {
+                clientStream.Close();
+                client.Close();
+                return null;
+            }
             int y = 0;
             int i = 0; //index of streamBuff
             ammountRead += x;
@@ -162,7 +173,16 @@ namespace CS422
 
                 if (y < validReq.Length) //only read if you need to.
                 {
-                    x = clientStream.Read(streamBuff, 0, 1024);//read next bytes
+                    try
+                    {
+                        x = clientStream.Read(streamBuff, 0, 1024);//read next bytes
+                    }
+                    catch //if read times out
+                    {
+                        clientStream.Close();
+                        client.Close();
+                        return null;
+                    }
                     ammountRead += x;
                 }
 
@@ -188,7 +208,18 @@ namespace CS422
                 else
                 {
                     //read more stuff
-                    x = clientStream.Read(streamBuff, 0, 1024); //read in more
+                    try
+                    {
+                        x = clientStream.Read(streamBuff, 0, 1024); //read in more
+                    }
+                    catch
+                    {
+                        clientStream.Close();
+                        client.Close();
+                        return null;
+                    }
+                    
+
                     ammountRead += x;
                     fullRequest += Encoding.Default.GetString(streamBuff);
 
