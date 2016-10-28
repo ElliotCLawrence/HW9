@@ -22,7 +22,7 @@ namespace CS422
             clientThread.Start();
 
 
-            TcpClient client = new TcpClient();
+           /* TcpClient client = new TcpClient();
 
             client.Connect("localhost", 1337);
 
@@ -31,7 +31,7 @@ namespace CS422
             byte[] response = new byte[1024];
             client.GetStream().Read(response, 0, 1024);
             string responseString = Encoding.Default.GetString(response);
-            Console.WriteLine(responseString);
+            Console.WriteLine(responseString);*/
             
 
             
