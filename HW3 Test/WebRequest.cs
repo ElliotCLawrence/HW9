@@ -43,26 +43,42 @@ namespace CS422
        
         public void WriteNotFoundResponse(string pageHTML)
         {
-            string responseString = "HTTP / 1.1 404 Not Found\nContent-Type: text/html\nContent-Length: " + pageHTML.Length + "\r\n\r\n" + pageHTML;
+            string responseString = "HTTP/1.1 404 Not Found\nContent-Type: text/html\nContent-Length: " + pageHTML.Length + "\r\n\r\n" + pageHTML;
             byte[] responseBytes = Encoding.ASCII.GetBytes(responseString);
-            netStream.Write(responseBytes, 0, responseBytes.Length); //write the status line 
+            try
+            {
+                netStream.Write(responseBytes, 0, responseBytes.Length); //write the status line 
+            }
+            catch
+            {
+                //do nothing, just exit the method after disposing
+            }
+            
+            netStream.Dispose();
         }
 
         public bool WriteHTMLResponse(string htmlString)
         {
-            string responseString = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + htmlString.Length + "\r\n\r\n" + htmlString;
+            string responseString = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + htmlString.Length + "\r\n\r\n" + htmlString;
             byte[] responseBytes = Encoding.ASCII.GetBytes(responseString);
-            netStream.Write(responseBytes, 0, responseBytes.Length); //write the status line 
+            try
+            {
+                netStream.Write(responseBytes, 0, responseBytes.Length); //write the status line 
+            }
+            catch
+            {
+
+            }
             netStream.Dispose();
             return true;
         }
 
-        public bool WriteHTMLResponse(Stream htmlStream)
+        public bool WriteHTMLResponse(Stream htmlStream, string contentType)
         {
             if (htmlStream == null)
                 return false;
 
-            string responseString = "HTTP / 1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: " + htmlStream.Length + "\r\n\r\n";
+            string responseString = "HTTP/1.1 200 OK\r\nContent-Type: "+ contentType + "\r\nContent-Length: " + htmlStream.Length + "\r\n\r\n";
 
             byte[] responseBytes = Encoding.ASCII.GetBytes(responseString);
             netStream.Write(responseBytes, 0, responseBytes.Length); //write the beginning response to the client.
@@ -70,15 +86,20 @@ namespace CS422
 
             byte[] buffer = new byte[1024]; //create a buffer for reading from a file
 
-            while (htmlStream.Read(buffer, 0, 1024) > 0) //read in the file and add it to HTML
+            try
             {
-                netStream.Write(buffer, 0, buffer.Length);
+                while (htmlStream.Read(buffer, 0, 1024) > 0) //read in the file and add it to HTML
+                {
+                    netStream.Write(buffer, 0, buffer.Length);
+                }
+            }
+            catch
+            {
+                htmlStream.Close();
             }
 
-
-
-            netStream.Dispose();
-
+            htmlStream.Close();
+            netStream.Close();
             return true;
         }
     }

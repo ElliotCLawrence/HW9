@@ -83,7 +83,7 @@ namespace CS422
                 bool found = false;
                 foreach (WebService services in webServices)
                 {
-                    if ((request.URI.Split('/'))[1] == (services.ServiceURI.Split('/'))[1])
+                    if ((request.URI.Split('/'))[1] == (services.ServiceURI.Split('/'))[1]) //FIX THIS
                     {
                         services.Handler(request);
                         found = true;

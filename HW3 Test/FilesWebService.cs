@@ -38,10 +38,14 @@ namespace CS422
 
             string[] pieces = req.URI.Substring(ServiceURI.Length).Split('/');  //split up the path by '/' tokens
 
+            if (pieces.Length == 1 && pieces[0] == "") //we passed in only the root
+                RespondWithList(r_sys.GetRoot(), req); 
+
+
             for (int x = 0; x < pieces.Length; x++)
             {
-                pieces[x] = Uri.UnescapeDataString(pieces[x]);
-                string temp = Uri.UnescapeDataString(pieces[x]);
+                pieces[x] = decode(pieces[x]);
+                
             }
                 
 
@@ -98,11 +102,8 @@ namespace CS422
                 html.AppendLine(
                     String.Format("<a href=\"{0}\">{1}</a>", GetHREFFromFile422(file), file.Name) //FIX THIS, first one should be full path
                 );
-                html.AppendLine("</br>");
+                html.AppendLine("</br>"); //append new lines for styling
             }
-
-            //TODO: build appropriate link based on what file/folder we're in
-            //should this filename contain spaces, '#', or something like that encode them so they're correct
 
             html.AppendLine("</html>");
             return html.ToString();
@@ -115,26 +116,31 @@ namespace CS422
 
         private void RespondWithFile(File422 file, WebRequest req) //return a file
         {
-            req.WriteHTMLResponse(file.OpenReadOnly()); //write a page as a file
+            string contentType = "text/html";//default to text/html
+
+            if (file.Name.Contains(".jpg") || file.Name.Contains(".jpeg"))
+                contentType = "image/jpeg";
+            else if (file.Name.Contains(".gif"))
+                contentType = "image/gif";
+            else if (file.Name.Contains(".png"))
+                contentType = "image/png";
+            else if (file.Name.Contains(".pdf"))
+                contentType = "application/pdf";
+            else if (file.Name.Contains(".mp4"))
+                contentType = "video/mp4";
+            else if (file.Name.Contains(".xml"))
+                contentType = "text/xml";
+
+
+
+                req.WriteHTMLResponse(file.OpenReadOnly(), contentType); //write a page as a file
         }
 
         string GetHREFFromFile422(File422 file) //get filepath from file
         {
-            //string path = file.Name; //create a filepath to return
-
-            //Dir422 temp = file.Parent; //create a temporary directory as this files parent
-
-            //while (temp != null) //while not past the root
-            //{
-            //    path = temp.Name + "/" + path; //prepend the parents name to the filepath with a '/'
-            //    temp = temp.Parent; //move up the parent path
-            //}
-
-            //path = "/" + path; //start the path with a '/'
-
             string path = ""; //path string
             path = uriPath + '/' + file.Name;
-            path = HttpUtility.HtmlEncode(path);
+            path = encode(path);
             return path;
             
         }
@@ -143,19 +149,31 @@ namespace CS422
         {
             string path = ""; //path string
 
-            //while (dir != null || ) //while not past the root
-            //{
-            //    path = dir.Name + "/" + path; //prepend the parents name to the filepath with a '/'
-            //    dir = dir.Parent; //move up the parent path
+            if (!uriPath.EndsWith("/")) //if you're not in root
+                path = uriPath + '/' + dir.Name;
+            else //if you're in root
+                path = uriPath + dir.Name;
 
-            //}
-
-            //path = "/" + path; //start the path with a '/'
-            //return HttpUtility.HtmlEncode(path);
-
-            path = uriPath + '/' + dir.Name;
-            path = HttpUtility.HtmlEncode(path);
+            path = encode(path); //encode it for HTML
             return path;
+        }
+
+        string encode(string decodedString) //adds %20 for spaces and other character encodes
+        {
+            string encodedString = "";
+
+            encodedString = decodedString.Replace(" ", "%20"); //encoding space with %20
+
+            return encodedString;
+        }
+
+        string decode(string encodedString) //removes %20 for spaces and other character encodes
+        {
+            string decodedString = "";
+
+            decodedString = encodedString.Replace("%20", " "); //replace %20 with space
+
+            return decodedString ;
         }
     }
 }

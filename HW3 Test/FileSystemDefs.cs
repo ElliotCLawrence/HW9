@@ -182,7 +182,7 @@ namespace CS422
 
         public override Dir422 getDir(string name)//gets a directory if it exists in current directory
         {
-            string fullName = m_path + "\\" + name;
+            string fullName = m_path + "/" + name;
             foreach (string dir in Directory.GetDirectories(m_path))
             {
                 if (dir == fullName)
