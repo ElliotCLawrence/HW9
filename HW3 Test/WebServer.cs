@@ -26,6 +26,7 @@ namespace CS422
         {
 
             AddService(new DemoService());
+            AddService(new FilesWebService(StandardFileSystem.Create("/Users/Elliot/Desktop")));
             threadPool = new ThreadPoolRouter(threadCount, portNum);
             threadPool.startWork();
 
@@ -82,7 +83,7 @@ namespace CS422
                 bool found = false;
                 foreach (WebService services in webServices)
                 {
-                    if (services.ServiceURI == request.URI)
+                    if ((request.URI.Split('/'))[1] == (services.ServiceURI.Split('/'))[1])
                     {
                         services.Handler(request);
                         found = true;

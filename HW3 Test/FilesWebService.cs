@@ -12,17 +12,18 @@ namespace CS422
     class FilesWebService : WebService
     {
         private readonly FileSys422 r_sys;
-
+        private string uriPath;
         public FilesWebService(FileSys422 fs)
         {
             r_sys = fs;
+            uriPath = null;
         }
 
         public override string ServiceURI
         {
             get
             {
-                return "/files";
+                return "/files/";
             }
         }
 
@@ -33,10 +34,21 @@ namespace CS422
                 throw new InvalidOperationException();
             }
 
+            uriPath = req.URI;
+
             string[] pieces = req.URI.Substring(ServiceURI.Length).Split('/');  //split up the path by '/' tokens
+
+            for (int x = 0; x < pieces.Length; x++)
+            {
+                pieces[x] = Uri.UnescapeDataString(pieces[x]);
+                string temp = Uri.UnescapeDataString(pieces[x]);
+            }
+                
+
             Dir422 dir = r_sys.GetRoot(); //grab the root of the filesystem
             for (int i = 0; i < pieces.Length -1; i++) //go through the parts of the path
             {
+                
                 dir = dir.getDir(pieces[i]);
                 if (dir == null) //if you encounter a directory that doesn't exist, tell the user that the target they requested is not found and return
                 {
@@ -74,7 +86,7 @@ namespace CS422
             foreach (Dir422 dir in directory.GetDirs())
             {
                 html.AppendLine(
-                    String.Format("<a href=\"{0}\">{1}</a>", ServiceURI + GetHREFFromDir422(dir), dir.Name) //FIX THIS, first one should be full path
+                    String.Format("<a href=\"{0}\">{1}</a>", GetHREFFromDir422(dir), dir.Name) //FIX THIS, first one should be full path
                     );
                 html.AppendLine("</br>");
             }
@@ -84,7 +96,7 @@ namespace CS422
             foreach (File422 file in directory.GetFiles())
             {
                 html.AppendLine(
-                    String.Format("<a href=\"{0}\">{1}</a>", ServiceURI + GetHREFFromFile422(file), file.Name) //FIX THIS, first one should be full path
+                    String.Format("<a href=\"{0}\">{1}</a>", GetHREFFromFile422(file), file.Name) //FIX THIS, first one should be full path
                 );
                 html.AppendLine("</br>");
             }
@@ -108,34 +120,42 @@ namespace CS422
 
         string GetHREFFromFile422(File422 file) //get filepath from file
         {
-            string path = file.Name; //create a filepath to return
+            //string path = file.Name; //create a filepath to return
 
-            Dir422 temp = file.Parent; //create a temporary directory as this files parent
+            //Dir422 temp = file.Parent; //create a temporary directory as this files parent
 
-            while (temp != null) //while not past the root
-            {
-                path = temp.Name + "/" + path; //prepend the parents name to the filepath with a '/'
-                temp = temp.Parent; //move up the parent path
-            }
+            //while (temp != null) //while not past the root
+            //{
+            //    path = temp.Name + "/" + path; //prepend the parents name to the filepath with a '/'
+            //    temp = temp.Parent; //move up the parent path
+            //}
 
-            path = "/" + path; //start the path with a '/'
+            //path = "/" + path; //start the path with a '/'
+
+            string path = ""; //path string
+            path = uriPath + '/' + file.Name;
+            path = HttpUtility.HtmlEncode(path);
             return path;
+            
         }
 
         string GetHREFFromDir422(Dir422 dir) //get filepath from directory
         {
             string path = ""; //path string
 
-            while (dir != null) //while not past the root
-            {
-                path = dir.Name + "/" + path; //prepend the parents name to the filepath with a '/'
-                dir = dir.Parent; //move up the parent path
-            }
+            //while (dir != null || ) //while not past the root
+            //{
+            //    path = dir.Name + "/" + path; //prepend the parents name to the filepath with a '/'
+            //    dir = dir.Parent; //move up the parent path
 
-            path = "/" + path; //start the path with a '/'
-            return HttpUtility.HtmlEncode(path);
+            //}
 
+            //path = "/" + path; //start the path with a '/'
+            //return HttpUtility.HtmlEncode(path);
 
+            path = uriPath + '/' + dir.Name;
+            path = HttpUtility.HtmlEncode(path);
+            return path;
         }
     }
 }

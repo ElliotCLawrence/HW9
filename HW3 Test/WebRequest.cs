@@ -40,11 +40,7 @@ namespace CS422
             URI = Destination;
         }
 
-        
-
-        
-
-
+       
         public void WriteNotFoundResponse(string pageHTML)
         {
             string responseString = "HTTP / 1.1 404 Not Found\nContent-Type: text/html\nContent-Length: " + pageHTML.Length + "\r\n\r\n" + pageHTML;
