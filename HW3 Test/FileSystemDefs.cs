@@ -183,9 +183,10 @@ namespace CS422
         public override Dir422 getDir(string name)//gets a directory if it exists in current directory
         {
             string fullName = m_path + "/" + name;
+            string windowsName = m_path + "\\" + name;
             foreach (string dir in Directory.GetDirectories(m_path))
             {
-                if (dir == fullName)
+                if (dir == fullName || dir == windowsName)
                     return new StdFSDir(fullName);
             }
 
@@ -205,10 +206,11 @@ namespace CS422
         public override File422 GetFile(string name)//returns a file if it exists in current directory
         {
             string fullName = m_path + "/" + name;
+            string windowsName = m_path + "\\" + name;
 
             foreach (string file in Directory.GetFiles(m_path))
             {
-                if (file == fullName)
+                if (file == fullName || file == windowsName)
                     return new StdFSFile(fullName);
             }
 

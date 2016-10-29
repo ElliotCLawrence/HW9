@@ -73,10 +73,126 @@ namespace CS422
             return true;
         }
 
+        private Tuple<string,string> getRangeHeader()
+        {
+            
+
+            foreach(Tuple<string,string> header in headers)
+            {
+                if (header.Item1 == "Range")
+                    return header;
+            }
+
+            return null;
+            
+        }
         public bool WriteHTMLResponse(Stream htmlStream, string contentType)
         {
             if (htmlStream == null)
                 return false;
+
+            Tuple<string, string> header = getRangeHeader();
+
+            //if (contentType == "video/mp4" && header != null)
+            //{
+            //    while (true) //serves as a loop to break out of...
+            //    {
+            //        string[] rangeInfo = header.Item2.Split('='); //right hand side should be byte ammounts and left should be measurement
+            //        if (rangeInfo.Length < 2) { break; } //nevermind range
+
+            //        string rangeType = rangeInfo[0];
+            //        string rangeByteCounts = rangeInfo[1];
+            //        string[] rangeByteLists = rangeByteCounts.Split('-');
+
+            //        int beginRange = -1;
+            //        int endRange = -1;
+            //        string rangeResponse = "HTTP/1.1 206 Partial Content\r\nContent-Type: " + contentType + "\r\nContent-Length: " + htmlStream.Length; //not finished yet
+            //        if (rangeByteLists.Length <= 1)
+            //            rangeResponse += "Accept-Ranges: " + rangeType + "\r\n\r\n";
+            //        else if (rangeByteLists.Length == 2) //always ends with ""
+            //        {
+            //            try
+            //            {
+            //                Int32.TryParse(rangeByteLists[0], out beginRange);
+            //            }
+
+            //            catch
+            //            {
+            //                break;
+            //            }
+            //            rangeResponse += "Accept-Ranges: " + rangeType + "\r\nContent-Range: " + rangeType + " " + beginRange.ToString() + "-" + htmlStream.Length + "/" + htmlStream.Length + "\r\n\r\n";
+
+            //        }
+            //        else if (rangeByteLists.Length == 3) //awlays ends with ""
+            //        {
+            //            try
+            //            {
+            //                Int32.TryParse(rangeByteLists[0], out beginRange);
+            //                Int32.TryParse(rangeByteLists[1], out endRange);
+            //            }
+            //            catch
+            //            {
+            //                break;
+            //            }
+            //            rangeResponse += "Accept-Ranges: " + rangeType + "\r\nContent-Range: " + rangeType + " " + beginRange.ToString() + "-" + endRange.ToString() + "/" + htmlStream.Length + "\r\n\r\n";
+            //        }
+            //        else break;
+
+            //        netStream.Write(Encoding.ASCII.GetBytes(rangeResponse), 0, Encoding.ASCII.GetBytes(rangeResponse).Length); //write the beginning of the range response
+            //        //end of foramtting, now read what we have to....
+            //        long counter = -1;
+            //        try
+            //        {
+            //            if (beginRange != -1)//user specified beginning range
+            //                htmlStream.Seek(beginRange, SeekOrigin.Begin);
+
+
+            //            if (endRange != -1) //check to see if an end range was given
+            //            {
+            //                counter = endRange - beginRange;
+            //            }
+            //            if (counter <= 0) //make sure endRange is after begin range
+            //                counter = htmlStream.Length + 1024; //make the counter larger than the stream.
+            //        }
+            //        catch
+            //        {
+            //            break;
+            //        }
+
+            //        byte[] buf = new byte[1024]; //create a buffer for reading from a file
+
+            //        try
+            //        {
+            //            while (htmlStream.Read(buf, 0, 1024) > 0 && counter >= 0) //read in the file and add it to HTML
+            //            {
+            //                counter -= buf.Length;
+
+            //                if (counter < 0)
+            //                {
+            //                    netStream.Write(buf, 0, buf.Length + (int)counter); //counter would be negative
+            //                }
+            //                else
+            //                {
+            //                    netStream.Write(buf, 0, buf.Length); //if counter is greater than length, just write everything read in.
+            //                }
+            //            }
+            //        }
+            //        catch
+            //        {
+            //            netStream.Close();
+            //            htmlStream.Close();
+            //            return false; //failed so return false
+            //        }
+
+
+            //        netStream.Close();
+            //        htmlStream.Close();
+            //        return true;
+
+            //    }
+
+                    
+            //} //else, do normal response
 
             string responseString = "HTTP/1.1 200 OK\r\nContent-Type: "+ contentType + "\r\nContent-Length: " + htmlStream.Length + "\r\n\r\n";
 
