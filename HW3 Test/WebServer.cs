@@ -17,7 +17,6 @@ namespace CS422
     class WebServer
     {
         static ThreadPoolRouter threadPool;
-        static DemoService demo;
         private static List<WebService> webServices = new List<WebService>();
         static Thread listenerThreadWorker;
         static TcpListener newListener;
@@ -25,8 +24,7 @@ namespace CS422
         public static bool Start(int portNum, int threadCount)
         {
 
-            AddService(new DemoService());
-            AddService(new FilesWebService(StandardFileSystem.Create("/Users/Elliot/Desktop")));
+            //AddService(new DemoService());
             threadPool = new ThreadPoolRouter(threadCount, portNum);
             threadPool.startWork();
 
